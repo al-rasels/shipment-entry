@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import NewCustomerModal from "../newCustomerModal/NewCustomerModal";
+const BASE = mainUrl;
+
 
 const ShipmentsEntry = () => {
+  
   const EMPTY_ROW = {
     ctnNo: "",
     goodsName: "",
@@ -15,6 +18,7 @@ const ShipmentsEntry = () => {
 
   const [newFields, setNewFields] = useState([{ ...EMPTY_ROW }]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [customerOptions, setCustomerOptions] = useState([]);
 
   // Function to handle data catching from new shipment fields
   const updateInputFields = (index, field, value) => {
@@ -25,6 +29,7 @@ const ShipmentsEntry = () => {
     });
   };
 
+  // Function to add a new shipment row
   const addNewShipmentRow = () => {
     setNewFields((prevFields) => [{ ...EMPTY_ROW }, ...prevFields]);
   };
@@ -43,20 +48,44 @@ const ShipmentsEntry = () => {
     }
   };
 
+  // Fetch customer options for dropdown
+  const DropdownCustomers = async () => {
+    try {
+      const res = await fetch(`${BASE}index.php/client/ajax_clientDropdown`);
+
+      const json = await res.json();
+
+      // SAFETY CHECK (old-school defensive programming)
+      if (!json?.result || !Array.isArray(json.result)) {
+        console.error("Unexpected API response", json);
+        return;
+      }
+
+      const options = json.result.map((item) => ({
+        value: item.id,
+        label: item.text,
+      }));
+
+      setCustomerOptions(options);
+    } catch (err) {
+      console.error("Customer dropdown load failed", err);
+    }
+  };
+
   return (
     <>
-      <section className="bg-gradient-to-br from-sky-50 via-indigo-50 to-teal-50 min-h-screen flex items-center justify-center p-4">
+      <section className="bg-linear-to-br from-sky-50 via-indigo-50 to-teal-50 min-h-screen flex items-center justify-center p-4">
         <div className="max-w-7xl w-full p-6 bg-white rounded-2xl shadow-xl border border-blue-100">
           {/* Header section */}
           <header className="mb-8">
             <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl font-bold bg-linear-to-r from-blue-600 via-cyan-500 to-teal-500 bg-clip-text text-transparent mb-2">
                 Carton Entry
               </h1>
             </div>
 
             {/* Customer selection and actions */}
-            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 mb-8 border border-blue-200 shadow-sm">
+            <div className="bg-linear-to-r from-blue-50 to-cyan-50 rounded-xl p-6 mb-8 border border-blue-200 shadow-sm">
               <div className="grid grid-cols-2 gap-6 items-center">
                 {/* Customer selection */}
                 <div className="space-y-2">
@@ -66,18 +95,21 @@ const ShipmentsEntry = () => {
                     Select Customer
                   </label>
                   <div className="relative">
-                    <select
-                      id="customer"
-                      name="customer"
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-blue-300 focus:border-cyan-500 focus:ring-2 outline-none focus:ring-cyan-200 transition-all duration-200 bg-white appearance-none cursor-pointer text-blue-800">
-                      <option value="" className="text-gray-500">
-                        Choose a customer...
-                      </option>
-                      <option value="cust_001">Shenzhen Logistics Ltd</option>
-                      <option value="cust_002">Guangzhou Trading Co</option>
-                      <option value="cust_003">Yiwu Import Export</option>
-                    </select>
+                    {customerOptions.map((opt) => (
+                      <select
+                        id="customer"
+                        name="customer"
+                        required
+                        className="w-full px-4 py-3 rounded-lg border border-blue-300 focus:border-cyan-500 focus:ring-2 outline-none focus:ring-cyan-200 transition-all duration-200 bg-white appearance-none cursor-pointer text-blue-800">
+                        <option value="" className="text-gray-500">
+                          Choose a customer...
+                        </option>
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      </select>
+                    ))}
+
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-700">
                       <svg
                         className="h-5 w-5"
@@ -97,7 +129,7 @@ const ShipmentsEntry = () => {
                 <div className="flex justify-end gap-5">
                   <button
                     onClick={() => setShowCustomerModal(true)}
-                    className="bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-medium px-8 py-5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer shadow-blue-200">
+                    className="bg-linear-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-medium px-8 py-5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer shadow-blue-200">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -114,7 +146,7 @@ const ShipmentsEntry = () => {
                   </button>
                   <button
                     onClick={addNewShipmentRow}
-                    className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white font-medium px-6 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer shadow-indigo-200">
+                    className="bg-linear-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white font-medium px-6 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer shadow-indigo-200">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -139,7 +171,7 @@ const ShipmentsEntry = () => {
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-blue-100">
                 <thead>
-                  <tr className="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600">
+                  <tr className="bg-linear-to-r from-blue-600 via-cyan-600 to-teal-600">
                     <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider w-[9%]">
                       CTN No
                     </th>
@@ -282,7 +314,7 @@ const ShipmentsEntry = () => {
                             className={`px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-1 ${
                               newFields.length === 1
                                 ? "bg-blue-100 text-blue-300 cursor-not-allowed"
-                                : "bg-gradient-to-r from-red-500 via-rose-500 to-pink-600 hover:from-red-600 hover:via-rose-600 hover:to-pink-700 text-white hover:shadow-lg cursor-pointer shadow-red-200"
+                                : "bg-linear-to-r from-red-500 via-rose-500 to-pink-600 hover:from-red-600 hover:via-rose-600 hover:to-pink-700 text-white hover:shadow-lg cursor-pointer shadow-red-200"
                             }`}
                             title={
                               newFields.length === 1
@@ -312,9 +344,9 @@ const ShipmentsEntry = () => {
             </div>
 
             {/* Table footer */}
-            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-4 border-t border-blue-200">
+            <div className="bg-linear-to-r from-blue-50 to-cyan-50 px-6 py-4 border-t border-blue-200">
               <div className="mx-auto max-w-max">
-                <button className="bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-medium px-8 py-5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer shadow-blue-200">
+                <button className="bg-linear-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-medium px-8 py-5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer shadow-blue-200">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -341,6 +373,6 @@ const ShipmentsEntry = () => {
       )}
     </>
   );
-};
+};;;;
 
 export default ShipmentsEntry;
