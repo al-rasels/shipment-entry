@@ -339,7 +339,7 @@ const ShipmentsEntry = () => {
       )}
     </>
   );
-};;;;;;;;
+}
 
 export default ShipmentsEntry;
 
