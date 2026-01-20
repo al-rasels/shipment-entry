@@ -45,24 +45,24 @@ const ShipmentsEntry = () => {
 
   return (
     <>
-      <section className="bg-linear-to-br from-gray-50 to-blue-50 min-h-screen flex items-center justify-center p-4">
-        <div className="max-w-7xl w-full p-6 bg-white rounded-2xl shadow-xl">
+      <section className="bg-gradient-to-br from-sky-50 via-indigo-50 to-teal-50 min-h-screen flex items-center justify-center p-4">
+        <div className="max-w-7xl w-full p-6 bg-white rounded-2xl shadow-xl border border-blue-100">
           {/* Header section */}
           <header className="mb-8">
             <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 bg-clip-text text-transparent mb-2">
                 Carton Entry
               </h1>
             </div>
 
             {/* Customer selection and actions */}
-            <div className="bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8 border border-blue-100">
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 mb-8 border border-blue-200 shadow-sm">
               <div className="grid grid-cols-2 gap-6 items-center">
                 {/* Customer selection */}
                 <div className="space-y-2">
                   <label
                     htmlFor="customer"
-                    className="block text-sm font-medium text-gray-700">
+                    className="block text-sm font-medium text-blue-700">
                     Select Customer
                   </label>
                   <div className="relative">
@@ -70,13 +70,15 @@ const ShipmentsEntry = () => {
                       id="customer"
                       name="customer"
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 outline-none focus:ring-blue-200 transition-all duration-200 bg-white appearance-none cursor-pointer">
-                      <option value="">Choose a customer...</option>
+                      className="w-full px-4 py-3 rounded-lg border border-blue-300 focus:border-cyan-500 focus:ring-2 outline-none focus:ring-cyan-200 transition-all duration-200 bg-white appearance-none cursor-pointer text-blue-800">
+                      <option value="" className="text-gray-500">
+                        Choose a customer...
+                      </option>
                       <option value="cust_001">Shenzhen Logistics Ltd</option>
                       <option value="cust_002">Guangzhou Trading Co</option>
                       <option value="cust_003">Yiwu Import Export</option>
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-700">
                       <svg
                         className="h-5 w-5"
                         fill="currentColor"
@@ -95,7 +97,7 @@ const ShipmentsEntry = () => {
                 <div className="flex justify-end gap-5">
                   <button
                     onClick={() => setShowCustomerModal(true)}
-                    className="bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium px-8 py-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer">
+                    className="bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-medium px-8 py-5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer shadow-blue-200">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -112,7 +114,7 @@ const ShipmentsEntry = () => {
                   </button>
                   <button
                     onClick={addNewShipmentRow}
-                    className="bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium px-6 py-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer">
+                    className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white font-medium px-6 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer shadow-indigo-200">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -133,11 +135,11 @@ const ShipmentsEntry = () => {
           </header>
 
           {/* Table section */}
-          <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+          <div className="overflow-hidden rounded-xl border border-blue-200 shadow-lg">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="min-w-full divide-y divide-blue-100">
                 <thead>
-                  <tr className="bg-linear-to-r from-blue-700 to-blue-500">
+                  <tr className="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600">
                     <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider w-[9%]">
                       CTN No
                     </th>
@@ -167,12 +169,12 @@ const ShipmentsEntry = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-100">
+                <tbody className="bg-white divide-y divide-blue-50">
                   {newFields.map((field, index) => (
                     <tr
                       key={index}
                       className="hover:bg-blue-50 transition-colors duration-150">
-                      <td className="px-2 py-2">
+                      <td className="px-1 py-2">
                         <input
                           type="text"
                           value={field.ctnNo}
@@ -180,10 +182,10 @@ const ShipmentsEntry = () => {
                             updateInputFields(index, "ctnNo", e.target.value)
                           }
                           placeholder="CTN No"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-500 transition text-blue-800"
                         />
                       </td>
-                      <td className="px-2 py-2">
+                      <td className="px-1 py-2">
                         <input
                           type="text"
                           value={field.goodsName}
@@ -195,10 +197,10 @@ const ShipmentsEntry = () => {
                             )
                           }
                           placeholder="Goods Name"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-500 transition text-blue-800"
                         />
                       </td>
-                      <td className="px-2 py-2">
+                      <td className="px-1 py-2">
                         <input
                           type="text"
                           value={field.chineseName}
@@ -210,10 +212,10 @@ const ShipmentsEntry = () => {
                             )
                           }
                           placeholder="Chinese Name"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-500 transition text-blue-800"
                         />
                       </td>
-                      <td className="px-2 py-2">
+                      <td className="px-1 py-2">
                         <input
                           type="number"
                           placeholder="Quantity"
@@ -221,10 +223,10 @@ const ShipmentsEntry = () => {
                           onChange={(e) =>
                             updateInputFields(index, "quantity", e.target.value)
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-500 transition text-blue-800"
                         />
                       </td>
-                      <td className="px-2 py-2">
+                      <td className="px-1 py-2">
                         <input
                           type="text"
                           placeholder="Unit"
@@ -232,10 +234,10 @@ const ShipmentsEntry = () => {
                           onChange={(e) =>
                             updateInputFields(index, "unit", e.target.value)
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-500 transition text-blue-800"
                         />
                       </td>
-                      <td className="px-2 py-2">
+                      <td className="px-1 py-2">
                         <input
                           type="number"
                           placeholder="Weight"
@@ -243,10 +245,10 @@ const ShipmentsEntry = () => {
                           onChange={(e) =>
                             updateInputFields(index, "weight", e.target.value)
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-500 transition text-blue-800"
                         />
                       </td>
-                      <td className="px-2 py-2">
+                      <td className="px-1 py-2">
                         <input
                           type="text"
                           value={field.expressNo}
@@ -258,10 +260,10 @@ const ShipmentsEntry = () => {
                             )
                           }
                           placeholder="Express No"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-500 transition text-blue-800"
                         />
                       </td>
-                      <td className="px-2 py-2">
+                      <td className="px-1 py-2">
                         <input
                           type="number"
                           value={field.cbm}
@@ -269,18 +271,18 @@ const ShipmentsEntry = () => {
                             updateInputFields(index, "cbm", e.target.value)
                           }
                           placeholder="CBM"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-500 transition text-blue-800"
                         />
                       </td>
-                      <td className="px-2 py-2">
+                      <td className="px-1 py-2">
                         <div className="flex justify-center">
                           <button
                             onClick={() => deleteRow(index)}
                             disabled={newFields.length === 1}
                             className={`px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-1 ${
                               newFields.length === 1
-                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                : "bg-red-500 hover:bg-red-600 text-white hover:shadow-md cursor-pointer"
+                                ? "bg-blue-100 text-blue-300 cursor-not-allowed"
+                                : "bg-gradient-to-r from-red-500 via-rose-500 to-pink-600 hover:from-red-600 hover:via-rose-600 hover:to-pink-700 text-white hover:shadow-lg cursor-pointer shadow-red-200"
                             }`}
                             title={
                               newFields.length === 1
@@ -310,9 +312,9 @@ const ShipmentsEntry = () => {
             </div>
 
             {/* Table footer */}
-            <div className="bg-linear-to-r from-blue-50 to-indigo-50 px-6 py-4 border-t border-gray-200">
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-4 border-t border-blue-200">
               <div className="mx-auto max-w-max">
-                <button className="bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium px-8 py-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer">
+                <button className="bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-medium px-8 py-5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer shadow-blue-200">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -339,10 +341,6 @@ const ShipmentsEntry = () => {
       )}
     </>
   );
-}
+};
 
 export default ShipmentsEntry;
-
-
-
- 
