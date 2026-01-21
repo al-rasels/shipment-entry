@@ -117,8 +117,8 @@ const ShipmentsEntry = () => {
             {/* Customer selection and actions */}
             <div className="customer-selection-card">
               <div className="customer-grid">
-                {/* Customer selection */}
-                <div>
+                {/* Customer selection - Takes 1/3 of space */}
+                <div className="customer-select-wrapper">
                   <div className="form-group">
                     <label htmlFor="customer" className="form-label">
                       Select Customer
@@ -128,31 +128,24 @@ const ShipmentsEntry = () => {
                         id="customer"
                         name="customer"
                         required
-                        className="select-element">
-                        <option value="">Choose a customer...</option>
+                        className="select-element"
+                        defaultValue="">
+                        <option value="" disabled>
+                          Choose a customer...
+                        </option>
                         <option value="cust_001">Shenzhen Logistics Ltd</option>
                         <option value="cust_002">Guangzhou Trading Co</option>
                         <option value="cust_003">Yiwu Import Export</option>
+                        <option value="cust_004">
+                          Shanghai Manufacturing Group
+                        </option>
+                        <option value="cust_005">Beijing Tech Solutions</option>
                       </select>
-
-                      <div className="select-arrow">
-                        <svg
-                          width="20"
-                          height="20"
-                          fill="currentColor"
-                          viewBox="0 0 20 20">
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Action buttons */}
+                {/* Action buttons - Take 2/3 of space */}
                 <div className="button-group">
                   <button
                     onClick={() => setShowCustomerModal(true)}
@@ -342,7 +335,7 @@ const ShipmentsEntry = () => {
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                               />
                             </svg>
-                            <span className="text-xs font-medium">Delete</span>
+                            {/* <span className="text-xs font-medium">Delete</span> */}
                           </button>
                         </div>
                       </td>
