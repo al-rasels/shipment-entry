@@ -208,13 +208,13 @@ const ShipmentsEntry = () => {
                     <th className="table-header-cell" style={{ width: "9%" }}>
                       Weight (kg)
                     </th>
-                    <th className="table-header-cell" style={{ width: "14%" }}>
+                    <th className="table-header-cell" style={{ width: "15%" }}>
                       Express No
                     </th>
-                    <th className="table-header-cell" style={{ width: "9%" }}>
+                    <th className="table-header-cell" style={{ width: "10%" }}>
                       CBM
                     </th>
-                    <th className="table-header-cell" style={{ width: "8%" }}>
+                    <th className="table-header-cell" style={{ width: "5%" }}>
                       Action
                     </th>
                   </tr>
