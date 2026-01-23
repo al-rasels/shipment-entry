@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NewCustomerModal from "../newCustomerModal/NewCustomerModal";
 import "./ShipmentsEntry.css"; // Import the CSS file
+import toast from "react-hot-toast";
 
-const BASE = "mainUrl";
-
+// const BASE = mainUrl;
+const BASE = "https://localhost/invi/"; // Replace with your actual base URL
 const ShipmentsEntry = () => {
   const EMPTY_ROW = {
     ctnNo: "",
@@ -20,10 +21,33 @@ const ShipmentsEntry = () => {
     phone: "",
     address: "",
   };
+  /// Static data test data if API fails
+  const DATA = {
+    result: [
+      {
+        id: "1",
+        text: "API NOT CONNECTED : 8801 : ",
+      },
+      {
+        id: "2",
+        text: "API NOT CONNECTED : 8802 : ",
+      },
+      {
+        id: "3",
+        text: "API NOT CONNECTED : 8803 : ",
+      },
+      {
+        id: "4",
+        text: "API NOT CONNECTED : 8804 : ",
+      },
+    ],
+  };
 
   const [newCustomer, setNewCustomer] = useState(initialCustomerState);
   const [newFields, setNewFields] = useState([{ ...EMPTY_ROW }]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [loadingCustomers, setLoadingCustomers] = useState(true);
 
   // Function to handle data catching from new shipment fields
   const updateInputFields = (index, field, value) => {
@@ -53,7 +77,7 @@ const ShipmentsEntry = () => {
     formData.append("name", newCustomer.name);
     formData.append("phone", newCustomer.phone);
     formData.append("address", newCustomer.address);
-
+    formData.append("client_star", "0");
     sendCustomerData(formData);
   };
 
@@ -70,15 +94,16 @@ const ShipmentsEntry = () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log("Customer created:", result);
+        toast.success("Customer created successfully!");
+        console.log(result);
         resetForm();
         setShowCustomerModal(false);
         window.location.reload();
       } else {
-        console.error("Error creating customer");
+        toast.error("Failed to create customer.");
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch (e) {
+      toast.error("An error occurred while creating customer." + e.message);
     }
   };
 
@@ -104,6 +129,28 @@ const ShipmentsEntry = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      setLoadingCustomers(true);
+      try {
+        const res = await fetch(`${BASE}index.php/client/ajax_clientDropdown`);
+        const data = await res.json();
+        
+     // set customers only if data.result is a non-empty array
+        if (Array.isArray(data?.result) && data.result.length > 0) return;
+           setCustomers(data.result);
+      } catch (e) {
+        console.error("API failed, using static data", e);
+        /// remove this line when API is connected
+        setCustomers(DATA.result);
+      } finally {
+        setLoadingCustomers(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
   return (
     <>
       <section className="shipments-entry-container">
@@ -124,23 +171,34 @@ const ShipmentsEntry = () => {
                       Select Customer
                     </label>
                     <div className="select-wrapper">
-                      <select
-                        id="customer"
-                        name="customer"
-                        required
-                        className="select-element"
-                        defaultValue="">
-                        <option value="" disabled>
-                          Choose a customer...
-                        </option>
-                        <option value="cust_001">Shenzhen Logistics Ltd</option>
-                        <option value="cust_002">Guangzhou Trading Co</option>
-                        <option value="cust_003">Yiwu Import Export</option>
-                        <option value="cust_004">
-                          Shanghai Manufacturing Group
-                        </option>
-                        <option value="cust_005">Beijing Tech Solutions</option>
-                      </select>
+                      {customers.length === 0 && loadingCustomers ? (
+                        <select
+                          id="customer"
+                          name="customer"
+                          required
+                          className="select-element"
+                          defaultValue="">
+                          <option value="" disabled>
+                            Loading customers...
+                          </option>
+                        </select>
+                      ) : (
+                        <select
+                          id="customer"
+                          name="customer"
+                          required
+                          className="select-element"
+                          defaultValue="">
+                          <option value="" disabled>
+                            Choose a customer...
+                          </option>
+                          {customers.map((customer) => (
+                            <option key={customer.id} value={customer.id}>
+                              {customer.text}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     </div>
                   </div>
                 </div>
