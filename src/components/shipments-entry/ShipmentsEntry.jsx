@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
+import Select from "react-select";
 import NewCustomerModal from "../newCustomerModal/NewCustomerModal";
-import "./ShipmentsEntry.css"; // Import the CSS file
+import "./ShipmentsEntry.css";
 import toast from "react-hot-toast";
 
-// const BASE = mainUrl;
-const BASE = "https://localhost/invi/"; // Replace with your actual base URL
+const BASE = mainUrl;
+
 const ShipmentsEntry = () => {
+  /* =======================
+     CONSTANTS
+  ======================= */
   const EMPTY_ROW = {
     ctnNo: "",
     goodsName: "",
@@ -21,128 +25,151 @@ const ShipmentsEntry = () => {
     phone: "",
     address: "",
   };
-  /// Static data test data if API fails
-  const DATA = {
-    result: [
-      {
-        id: "1",
-        text: "API NOT CONNECTED : 8801 : ",
-      },
-      {
-        id: "2",
-        text: "API NOT CONNECTED : 8802 : ",
-      },
-      {
-        id: "3",
-        text: "API NOT CONNECTED : 8803 : ",
-      },
-      {
-        id: "4",
-        text: "API NOT CONNECTED : 8804 : ",
-      },
-    ],
-  };
 
+  /* =======================
+     STATES
+  ======================= */
   const [newCustomer, setNewCustomer] = useState(initialCustomerState);
   const [newFields, setNewFields] = useState([{ ...EMPTY_ROW }]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customers, setCustomers] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [loadingCustomers, setLoadingCustomers] = useState(true);
 
-  // Function to handle data catching from new shipment fields
+  /* =======================
+     TABLE HANDLERS
+  ======================= */
   const updateInputFields = (index, field, value) => {
-    setNewFields((prevFields) => {
-      const updatedFields = [...prevFields];
-      updatedFields[index][field] = value;
-      return updatedFields;
+    setNewFields((prev) => {
+      const updated = [...prev];
+      updated[index][field] = value;
+      return updated;
     });
   };
 
-  // Function to add a new shipment row
   const addNewShipmentRow = () => {
-    setNewFields((prevFields) => [{ ...EMPTY_ROW }, ...prevFields]);
+    setNewFields((prev) => [{ ...EMPTY_ROW }, ...prev]);
   };
 
-  // Handle input changes
-  const handleCustomerInputChange = (field, value) => {
-    setNewCustomer((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const deleteRow = (index) => {
+    if (newFields.length > 1) {
+      setNewFields((prev) => prev.filter((_, i) => i !== index));
+    }
   };
 
-  // Handle form submission with FormData
-  const handleAddCustomer = () => {
+  /* =======================
+     SUBMIT CARTONS (MAIN)
+  ======================= */
+  const handleSubmitCartons = async () => {
+    if (!selectedCustomer) {
+      toast.error("Please select a customer");
+      return;
+    }
+
+    const validRows = newFields.filter(
+      (row) => row.ctnNo && row.goodsName
+    );
+
+    if (validRows.length === 0) {
+      toast.error("Please enter at least one valid carton");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("name", newCustomer.name);
-    formData.append("phone", newCustomer.phone);
-    formData.append("address", newCustomer.address);
-    formData.append("client_star", "0");
-    sendCustomerData(formData);
-  };
+    formData.append("client_id", selectedCustomer.value);
 
-  // Example API call with FormData
-  const sendCustomerData = async (formData) => {
+    validRows.forEach((row) => {
+      formData.append("ctn_no[]", row.ctnNo);
+      formData.append("goods_name[]", row.goodsName);
+      formData.append("chinese_name[]", row.chineseName);
+      formData.append("goods_qty[]", row.quantity);
+      formData.append("unit[]", "PCS");
+      formData.append("weight[]", row.weight);
+      formData.append("express_no[]", row.expressNo);
+      formData.append("cbm[]", row.cbm);
+    });
+
     try {
-      const response = await fetch(
-        `${BASE}index.php/sell_con/saveInstantClient`,
+      const res = await fetch(
+        `${BASE}index.php/plugins/freight/save-multiple-data`,
         {
           method: "POST",
           body: formData,
-        },
+        }
       );
 
-      if (response.ok) {
-        const result = await response.json();
-        toast.success("Customer created successfully!");
-        console.log(result);
-        resetForm();
-        setShowCustomerModal(false);
-        window.location.reload();
+      const data = await res.json();
+
+      if (data.code === 1) {
+        toast.success(data.message || "Cartons saved successfully");
+        setNewFields([{ ...EMPTY_ROW }]);
       } else {
-        toast.error("Failed to create customer.");
+        toast.error(data.message || "Failed to save cartons");
       }
-    } catch (e) {
-      toast.error("An error occurred while creating customer." + e.message);
+    } catch (err) {
+      console.error(err);
+      toast.error("Server error");
     }
   };
 
-  // Reset form
-  const resetForm = () => {
-    setNewCustomer({
-      name: "",
-      phone: "",
-      address: "",
-    });
+  /* =======================
+     CUSTOMER CREATE
+  ======================= */
+  const handleCustomerInputChange = (field, value) => {
+    setNewCustomer((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Function to delete a row
-  const deleteRow = (index) => {
-    if (newFields.length > 1) {
-      setNewFields((prevFields) => {
-        const updatedFields = [...prevFields];
-        updatedFields.splice(index, 1);
-        return updatedFields;
-      });
-    } else {
-      setNewFields([{ ...EMPTY_ROW }]);
+  const handleAddCustomer = async () => {
+    if (!newCustomer.name || !newCustomer.phone) {
+      toast.error("Name and phone are required");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("client_name", newCustomer.name);
+    formData.append("client_mobile", newCustomer.phone);
+    formData.append("client_address", newCustomer.address);
+    formData.append("client_star", "0");
+
+    try {
+      const res = await fetch(
+        `${BASE}index.php/sell_con/saveInstantClient`,
+        { method: "POST", body: formData }
+      );
+
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result?.message);
+
+      toast.success("Customer created successfully!");
+
+      setCustomers((prev) => [
+        { id: result.id, text: `${newCustomer.name} : ${newCustomer.phone}` },
+        ...prev,
+      ]);
+
+      setNewCustomer(initialCustomerState);
+      setShowCustomerModal(false);
+    } catch (err) {
+      toast.error(err.message || "Something went wrong");
     }
   };
 
+  /* =======================
+     FETCH CUSTOMERS
+  ======================= */
   useEffect(() => {
     const fetchCustomers = async () => {
       setLoadingCustomers(true);
       try {
-        const res = await fetch(`${BASE}index.php/client/ajax_clientDropdown`);
+        const res = await fetch(
+          `${BASE}index.php/client/ajax_clientDropdown`
+        );
         const data = await res.json();
-        
-     // set customers only if data.result is a non-empty array
-        if (Array.isArray(data?.result) && data.result.length > 0) return;
-           setCustomers(data.result);
-      } catch (e) {
-        console.error("API failed, using static data", e);
-        /// remove this line when API is connected
-        setCustomers(DATA.result);
+        setCustomers(Array.isArray(data?.result) ? data.result : []);
+      } catch (err) {
+        console.error(err);
+        setCustomers([]);
       } finally {
         setLoadingCustomers(false);
       }
@@ -171,35 +198,18 @@ const ShipmentsEntry = () => {
                       Select Customer
                     </label>
                     <div className="select-wrapper">
-                      {customers.length === 0 && loadingCustomers ? (
-                        <select
-                          id="customer"
-                          name="customer"
-                          required
-                          className="select-element"
-                          defaultValue="">
-                          <option value="" disabled>
-                            Loading customers...
-                          </option>
-                        </select>
-                      ) : (
-                        <select
-                          id="customer"
-                          name="customer"
-                          required
-                          className="select-element"
-                          defaultValue="">
-                          <option value="" disabled>
-                            Choose a customer...
-                          </option>
-                          {customers.map((customer) => (
-                            <option key={customer.id} value={customer.id}>
-                              {customer.text}
-                            </option>
-                          ))}
-                        </select>
-                      )}
+                      <Select
+                        isLoading={loadingCustomers}
+                        options={customers.map((c) => ({
+                          value: c.id,
+                          label: c.text,
+                        }))}
+                        placeholder="Search customer by name or phone..."
+                        onChange={(option) => setSelectedCustomer(option)}
+                        isClearable
+                      />
                     </div>
+
                   </div>
                 </div>
 
@@ -207,12 +217,9 @@ const ShipmentsEntry = () => {
                 <div className="button-group">
                   <button
                     onClick={() => setShowCustomerModal(true)}
-                    className="button button-primary">
-                    <svg
-                      className="icon"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
+                    className="button button-secondary"
+                  >
+                    <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -222,6 +229,7 @@ const ShipmentsEntry = () => {
                     </svg>
                     Add New Customer
                   </button>
+
                   <button
                     onClick={addNewShipmentRow}
                     className="button button-secondary">
@@ -261,6 +269,9 @@ const ShipmentsEntry = () => {
                     </th>
                     <th className="table-header-cell" style={{ width: "9%" }}>
                       Quantity
+                    </th>
+                    <th className="table-header-cell" style={{ width: "9%" }}>
+                      Unit
                     </th>
 
                     <th className="table-header-cell" style={{ width: "9%" }}>
@@ -332,6 +343,14 @@ const ShipmentsEntry = () => {
                           className="input-field"
                         />
                       </td>
+                      <td className="table-cell">
+                        <input
+                          type="text"
+                          placeholder="Unit"
+                          value="PCS"
+                          className="input-field"
+                        />
+                      </td> 
 
                       <td className="table-cell">
                         <input
@@ -406,7 +425,7 @@ const ShipmentsEntry = () => {
             {/* Table footer */}
             <div className="table-footer">
               <div className="footer-content">
-                <button className="submit-button">
+                <button onClick={handleSubmitCartons} className="submit-button">
                   <svg
                     className="icon"
                     fill="none"
@@ -421,6 +440,7 @@ const ShipmentsEntry = () => {
                   </svg>
                   Submit Cartons
                 </button>
+
               </div>
             </div>
           </div>
@@ -430,12 +450,13 @@ const ShipmentsEntry = () => {
       {/* Customer Creation Modal */}
       {showCustomerModal && (
         <NewCustomerModal
-          setShowCustomerModal={setShowCustomerModal}
           newCustomer={newCustomer}
           handleCustomerInputChange={handleCustomerInputChange}
+          setShowCustomerModal={setShowCustomerModal}
           handleAddCustomer={handleAddCustomer}
         />
       )}
+
     </>
   );
 };
