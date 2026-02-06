@@ -59,13 +59,15 @@
 
 @media (min-width: 768px) {
   .customer-grid {
-    grid-template-columns: 1fr 2fr; /* Selection takes 1/3, buttons take 2/3 */
+    grid-template-columns: 1fr 1fr; /* Selection takes 1/3, buttons take 2/3 */
     gap: 2rem;
   }
 }
 
 .customer-select-wrapper {
   width: 100%;
+  display: flex;
+  gap: 5rem;
 }
 
 /* Form controls */

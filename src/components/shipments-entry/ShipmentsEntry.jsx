@@ -33,8 +33,11 @@ const ShipmentsEntry = () => {
   const [newFields, setNewFields] = useState([{ ...EMPTY_ROW }]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customers, setCustomers] = useState([]);
+  const [shipments, setShipments] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedShipment, setSelectedShipment] = useState(null);
   const [loadingCustomers, setLoadingCustomers] = useState(true);
+  const [loadingShipments, setLoadingShipments] = useState(true);
 
   /* =======================
      TABLE HANDLERS
@@ -65,10 +68,12 @@ const ShipmentsEntry = () => {
       toast.error("Please select a customer");
       return;
     }
+    if (!selectedShipment) {
+      toast.error("Please select a shipment");
+      return;
+    }
 
-    const validRows = newFields.filter(
-      (row) => row.ctnNo && row.goodsName
-    );
+    const validRows = newFields.filter((row) => row.ctnNo && row.goodsName);
 
     if (validRows.length === 0) {
       toast.error("Please enter at least one valid carton");
@@ -77,6 +82,7 @@ const ShipmentsEntry = () => {
 
     const formData = new FormData();
     formData.append("client_id", selectedCustomer.value);
+    formData.append("shipment_id", selectedShipment.value); // newly added shipment_id field or  name as per backend requirement
 
     validRows.forEach((row) => {
       formData.append("ctn_no[]", row.ctnNo);
@@ -95,7 +101,7 @@ const ShipmentsEntry = () => {
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       const data = await res.json();
@@ -132,10 +138,10 @@ const ShipmentsEntry = () => {
     formData.append("client_star", "0");
 
     try {
-      const res = await fetch(
-        `${BASE}index.php/sell_con/saveInstantClient`,
-        { method: "POST", body: formData }
-      );
+      const res = await fetch(`${BASE}index.php/sell_con/saveInstantClient`, {
+        method: "POST",
+        body: formData,
+      });
 
       const result = await res.json();
 
@@ -162,9 +168,7 @@ const ShipmentsEntry = () => {
     const fetchCustomers = async () => {
       setLoadingCustomers(true);
       try {
-        const res = await fetch(
-          `${BASE}index.php/client/ajax_clientDropdown`
-        );
+        const res = await fetch(`${BASE}index.php/client/ajax_clientDropdown`);
         const data = await res.json();
         setCustomers(Array.isArray(data?.result) ? data.result : []);
       } catch (err) {
@@ -176,6 +180,29 @@ const ShipmentsEntry = () => {
     };
 
     fetchCustomers();
+  }, []);
+
+  /* =======================
+     FETCH SHIPMENTS ON CUSTOMER SELECT
+  ======================= */
+  useEffect(() => {
+    const fetchShipment = async () => {
+      setLoadingShipments(true);
+      try {
+        const res = await fetch(
+          `${BASE}index.php/client/ajax_shipmentDropdown`,
+        ); // Replace with actual endpoint to fetch shipments based on selected customer
+        const data = await res.json();
+        setShipments(Array.isArray(data?.result) ? data.result : []);
+      } catch (err) {
+        console.error(err);
+        setShipments([]);
+      } finally {
+        setLoadingShipments(false);
+      }
+    };
+
+    fetchShipment();
   }, []);
 
   return (
@@ -191,8 +218,9 @@ const ShipmentsEntry = () => {
             {/* Customer selection and actions */}
             <div className="customer-selection-card">
               <div className="customer-grid">
-                {/* Customer selection - Takes 1/3 of space */}
+                {/*  selection - Takes 1/3 of space */}
                 <div className="customer-select-wrapper">
+                  {/* customer selection  */}
                   <div className="form-group">
                     <label htmlFor="customer" className="form-label">
                       Select Customer
@@ -209,7 +237,24 @@ const ShipmentsEntry = () => {
                         isClearable
                       />
                     </div>
-
+                  </div>
+                  {/* shipment selection  */}
+                  <div className="form-group">
+                    <label htmlFor="customer" className="form-label">
+                      Select Shipment
+                    </label>
+                    <div className="select-wrapper">
+                      <Select
+                        isLoading={loadingShipments}
+                        options={shipments.map((s) => ({
+                          value: s.id,
+                          label: s.text,
+                        }))}
+                        placeholder="Search shipment by name..."
+                        onChange={(option) => setSelectedShipment(option)}
+                        isClearable
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -217,9 +262,12 @@ const ShipmentsEntry = () => {
                 <div className="button-group">
                   <button
                     onClick={() => setShowCustomerModal(true)}
-                    className="button button-secondary"
-                  >
-                    <svg className="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    className="button button-secondary">
+                    <svg
+                      className="icon"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -350,7 +398,7 @@ const ShipmentsEntry = () => {
                           value="PCS"
                           className="input-field"
                         />
-                      </td> 
+                      </td>
 
                       <td className="table-cell">
                         <input
@@ -440,7 +488,6 @@ const ShipmentsEntry = () => {
                   </svg>
                   Submit Cartons
                 </button>
-
               </div>
             </div>
           </div>
@@ -456,9 +503,8 @@ const ShipmentsEntry = () => {
           handleAddCustomer={handleAddCustomer}
         />
       )}
-
     </>
   );
-};
+};;;;;;;;;;;;;;;;;;;;;;
 
 export default ShipmentsEntry;
