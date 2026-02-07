@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import Select from "react-select";
 import NewCustomerModal from "../newCustomerModal/NewCustomerModal";
 import "./ShipmentsEntry.css";
-import toast from "react-hot-toast";
 
-// const BASE = mainUrl;
+const BASE = mainUrl;
 
 const ShipmentsEntry = () => {
   /* =======================
@@ -106,7 +106,7 @@ const ShipmentsEntry = () => {
 
       const data = await res.json();
       console.log(data);
-      if (data.code === 1) {
+      if (data.code == 1) {
         toast.success(data.message || "Cartons saved successfully");
         setNewFields([{ ...EMPTY_ROW }]);
       } else {
@@ -190,7 +190,7 @@ const ShipmentsEntry = () => {
       setLoadingShipments(true);
       try {
         const res = await fetch(
-          `${BASE}index.php/client/ajax_shipmentDropdown`,
+          `${BASE}index.php/plugins/freight/shipments`,
         ); // Replace with actual endpoint to fetch shipments based on selected customer
         const data = await res.json();
         setShipments(Array.isArray(data?.result) ? data.result : []);
