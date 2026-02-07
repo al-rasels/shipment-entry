@@ -4,7 +4,7 @@ import NewCustomerModal from "../newCustomerModal/NewCustomerModal";
 import "./ShipmentsEntry.css";
 import toast from "react-hot-toast";
 
-const BASE = mainUrl;
+// const BASE = mainUrl;
 
 const ShipmentsEntry = () => {
   /* =======================
