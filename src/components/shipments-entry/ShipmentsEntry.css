@@ -11,7 +11,7 @@
 }
 
 .shipments-entry-inner {
-  max-width: 75dvw;
+  max-width: 95dvw;
   width: 100%;
   padding: 1.5rem;
   background-color: white;
@@ -59,7 +59,7 @@
 
 @media (min-width: 768px) {
   .customer-grid {
-    grid-template-columns: 1fr 1fr; /* Selection takes 1/3, buttons take 2/3 */
+    grid-template-columns: 2fr 1fr; /* Selection takes 1/3, buttons take 2/3 */
     gap: 2rem;
   }
 }
@@ -67,7 +67,7 @@
 .customer-select-wrapper {
   width: 100%;
   display: flex;
-  gap: 5rem;
+  gap: 3rem;
 }
 
 /* Form controls */
