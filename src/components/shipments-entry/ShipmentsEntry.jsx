@@ -4,7 +4,7 @@ import Select from "react-select";
 import NewCustomerModal from "../newCustomerModal/NewCustomerModal";
 import "./ShipmentsEntry.css";
 
-const BASE = "mainUrl";
+const BASE = mainUrl;
 
 const ShipmentsEntry = () => {
   /* =======================
