@@ -4,7 +4,7 @@ import Select from "react-select";
 import NewCustomerModal from "../newCustomerModal/NewCustomerModal";
 import "./ShipmentsEntry.css";
 
-const BASE = mainUrl;
+const BASE = "mainUrl";
 
 const ShipmentsEntry = () => {
   /* =======================
@@ -16,6 +16,7 @@ const ShipmentsEntry = () => {
     chineseName: "",
     quantity: "",
     weight: "",
+    netWeight: "",
     expressNo: "",
     cbm: "",
   };
@@ -91,6 +92,7 @@ const ShipmentsEntry = () => {
       formData.append("goods_qty[]", row.quantity);
       formData.append("unit[]", "PCS");
       formData.append("weight[]", row.weight);
+      formData.append("net_weight[]", row.netWeight);
       formData.append("express_no[]", row.expressNo);
       formData.append("cbm[]", row.cbm);
     });
@@ -189,9 +191,7 @@ const ShipmentsEntry = () => {
     const fetchShipment = async () => {
       setLoadingShipments(true);
       try {
-        const res = await fetch(
-          `${BASE}index.php/plugins/freight/shipments`,
-        ); // Replace with actual endpoint to fetch shipments based on selected customer
+        const res = await fetch(`${BASE}index.php/plugins/freight/shipments`); // Replace with actual endpoint to fetch shipments based on selected customer
         const data = await res.json();
         setShipments(Array.isArray(data?.result) ? data.result : []);
       } catch (err) {
@@ -306,26 +306,29 @@ const ShipmentsEntry = () => {
               <table className="table">
                 <thead>
                   <tr className="table-header">
-                    <th className="table-header-cell" style={{ width: "9%" }}>
+                    <th className="table-header-cell" style={{ width: "8%" }}>
                       CTN No
                     </th>
-                    <th className="table-header-cell" style={{ width: "18%" }}>
+                    <th className="table-header-cell" style={{ width: "17%" }}>
                       Goods Name
                     </th>
-                    <th className="table-header-cell" style={{ width: "18%" }}>
+                    <th className="table-header-cell" style={{ width: "17%" }}>
                       Chinese Name
                     </th>
-                    <th className="table-header-cell" style={{ width: "9%" }}>
+                    <th className="table-header-cell" style={{ width: "8%" }}>
                       Quantity
                     </th>
-                    <th className="table-header-cell" style={{ width: "9%" }}>
+                    <th className="table-header-cell" style={{ width: "5%" }}>
                       Unit
                     </th>
-
-                    <th className="table-header-cell" style={{ width: "9%" }}>
+                    <th className="table-header-cell" style={{ width: "8%" }}>
                       Weight (kg)
                     </th>
-                    <th className="table-header-cell" style={{ width: "15%" }}>
+                    <th className="table-header-cell" style={{ width: "10%" }}>
+                      {" "}
+                      Net Weight (kg)
+                    </th>
+                    <th className="table-header-cell" style={{ width: "10%" }}>
                       Express No
                     </th>
                     <th className="table-header-cell" style={{ width: "10%" }}>
@@ -412,6 +415,23 @@ const ShipmentsEntry = () => {
                         />
                       </td>
                       <td className="table-cell">
+                        {" "}
+                        {/*  new added  */}
+                        <input
+                          type="number"
+                          placeholder="Net Weight"
+                          value={field.netWeight}
+                          onChange={(e) =>
+                            updateInputFields(
+                              index,
+                              "netWeight",
+                              e.target.value,
+                            )
+                          }
+                          className="input-field"
+                        />
+                      </td>
+                      <td className="table-cell">
                         <input
                           type="text"
                           value={field.expressNo}
@@ -460,7 +480,6 @@ const ShipmentsEntry = () => {
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                               />
                             </svg>
-
                           </button>
                         </div>
                       </td>
@@ -505,6 +524,6 @@ const ShipmentsEntry = () => {
       )}
     </>
   );
-}
+};
 
 export default ShipmentsEntry;
