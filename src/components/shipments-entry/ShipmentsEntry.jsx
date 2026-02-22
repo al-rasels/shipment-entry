@@ -52,7 +52,7 @@ const ShipmentsEntry = () => {
   };
 
   const addNewShipmentRow = () => {
-    setNewFields((prev) => [{ ...EMPTY_ROW }, ...prev]);
+    setNewFields((prev) => [...prev, EMPTY_ROW]);
   };
 
   const deleteRow = (index) => {
