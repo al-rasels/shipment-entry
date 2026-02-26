@@ -52,7 +52,7 @@ const ShipmentsEntry = () => {
   };
 
   const addNewShipmentRow = () => {
-    setNewFields((prev) => [...prev, EMPTY_ROW]);
+    setNewFields((prev) => [...prev, { ...EMPTY_ROW }]);
   };
 
   const deleteRow = (index) => {
@@ -205,10 +205,147 @@ const ShipmentsEntry = () => {
     fetchShipment();
   }, []);
 
+  /* ======================= SUMMARY COUNTS ======================= */
+  const totalRows = newFields.length;
+
+  const totalQuantity = newFields.reduce((sum, row) => {
+    const val = parseFloat(row.quantity);
+    return sum + (isNaN(val) ? 0 : val);
+  }, 0);
+
+  const totalWeight = newFields.reduce((sum, row) => {
+    const val = parseFloat(row.weight);
+    return sum + (isNaN(val) ? 0 : val);
+  }, 0);
+
+  const totalNetWeight = newFields.reduce((sum, row) => {
+    const val = parseFloat(row.netWeight);
+    return sum + (isNaN(val) ? 0 : val);
+  }, 0);
+
   return (
     <>
       <section className="shipments-entry-container">
         <div className="shipments-entry-inner">
+          {/* ======================= COUNT CARDS ======================= */}
+          <div className="count-cards-wrapper">
+            <div className="count-card count-card--rows">
+              <div className="count-card__icon-wrap">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  className="count-card__svg">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"
+                  />
+                </svg>
+              </div>
+              <span className="count-card__label">Total Cartons</span>
+              <span className="count-card__value">{totalRows}</span>
+              <span className="count-card__sub">carton entries</span>
+            </div>
+
+            <div className="count-card count-card--qty">
+              <div className="count-card__icon-wrap">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  className="count-card__svg">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    d="M3 3h18M3 9h18M3 15h18M3 21h18"
+                  />
+                  <circle cx="7" cy="3" r="1" fill="currentColor" />
+                  <circle cx="7" cy="9" r="1" fill="currentColor" />
+                  <circle cx="7" cy="15" r="1" fill="currentColor" />
+                  <circle cx="7" cy="21" r="1" fill="currentColor" />
+                </svg>
+              </div>
+              <span className="count-card__label">Total Quantity</span>
+              <span className="count-card__value">
+                {totalQuantity.toLocaleString()}
+                <span className="count-card__unit">PCS</span>
+              </span>
+              <span className="count-card__sub">across all rows</span>
+            </div>
+
+            <div className="count-card count-card--weight">
+              <div className="count-card__icon-wrap">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  className="count-card__svg">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    d="M12 3a3 3 0 100 6 3 3 0 000-6z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    d="M6.5 9H4a1 1 0 00-.98.804L2 19a2 2 0 002 2h16a2 2 0 002-2l-1.02-9.196A1 1 0 0019.98 9H17.5"
+                  />
+                </svg>
+              </div>
+              <span className="count-card__label">Total Weight</span>
+              <span className="count-card__value">
+                {totalWeight.toFixed(2)}
+                <span className="count-card__unit">KG</span>
+              </span>
+              <span className="count-card__sub">gross weight</span>
+            </div>
+
+            <div className="count-card count-card--netweight">
+              <div className="count-card__icon-wrap">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  className="count-card__svg">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    d="M9 5a2 2 0 002 2h2a2 2 0 002-2 2 2 0 00-2-2h-2a2 2 0 00-2 2z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    d="M9 14l2 2 4-4"
+                  />
+                </svg>
+              </div>
+              <span className="count-card__label">Total Net Weight</span>
+              <span className="count-card__value">
+                {totalNetWeight.toFixed(2)}
+                <span className="count-card__unit">KG</span>
+              </span>
+              <span className="count-card__sub">net weight</span>
+            </div>
+          </div>
           {/* Header section */}
           <header className="shipments-entry-header">
             <div className="header-center">
