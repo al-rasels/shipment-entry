@@ -459,7 +459,7 @@ const ShipmentsEntry = () => {
                       Unit
                     </th>
                     <th className="table-header-cell" style={{ width: "8%" }}>
-                      Weight (kg)
+                      G Weight (kg)
                     </th>
                     <th className="table-header-cell" style={{ width: "10%" }}>
                       {" "}
