@@ -443,14 +443,14 @@ const ShipmentsEntry = () => {
               <table className="table">
                 <thead>
                   <tr className="table-header">
-                    <th className="table-header-cell" style={{ width: "8%" }}>
+                    <th className="table-header-cell" style={{ width: "14%" }}>
                       CTN No
                     </th>
-                    <th className="table-header-cell" style={{ width: "17%" }}>
+                    <th className="table-header-cell" style={{ width: "25%" }}>
                       Goods Name
                     </th>
-                    <th className="table-header-cell" style={{ width: "17%" }}>
-                      Chinese Name
+                    <th className="table-header-cell" style={{ width: "5%" }}>
+                      C.Name
                     </th>
                     <th className="table-header-cell" style={{ width: "8%" }}>
                       Quantity
@@ -468,7 +468,7 @@ const ShipmentsEntry = () => {
                     <th className="table-header-cell" style={{ width: "10%" }}>
                       Express No
                     </th>
-                    <th className="table-header-cell" style={{ width: "10%" }}>
+                    <th className="table-header-cell" style={{ width: "8%" }}>
                       CBM
                     </th>
                     <th className="table-header-cell" style={{ width: "5%" }}>
@@ -516,7 +516,7 @@ const ShipmentsEntry = () => {
                               e.target.value,
                             )
                           }
-                          placeholder="Chinese Name"
+                          placeholder="C.Name"
                           className="input-field"
                         />
                       </td>
