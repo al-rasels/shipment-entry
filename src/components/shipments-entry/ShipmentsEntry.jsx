@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Select from "react-select";
+import AsyncSelect from "react-select/async";
 import NewCustomerModal from "../newCustomerModal/NewCustomerModal";
 import "./ShipmentsEntry.css";
 
@@ -33,11 +34,9 @@ const ShipmentsEntry = () => {
   const [newCustomer, setNewCustomer] = useState(initialCustomerState);
   const [newFields, setNewFields] = useState([{ ...EMPTY_ROW }]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
-  const [customers, setCustomers] = useState([]);
   const [shipments, setShipments] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedShipment, setSelectedShipment] = useState(null);
-  const [loadingCustomers, setLoadingCustomers] = useState(true);
   const [loadingShipments, setLoadingShipments] = useState(true);
 
   /* =======================
@@ -151,10 +150,11 @@ const ShipmentsEntry = () => {
 
       toast.success("Customer created successfully!");
 
-      setCustomers((prev) => [
-        { id: result.id, text: `${newCustomer.name} : ${newCustomer.phone}` },
-        ...prev,
-      ]);
+      // Update selected customer to the newly created one
+      setSelectedCustomer({
+        value: result.id,
+        label: `${newCustomer.name} : ${newCustomer.phone}`,
+      });
 
       setNewCustomer(initialCustomerState);
       setShowCustomerModal(false);
@@ -164,25 +164,23 @@ const ShipmentsEntry = () => {
   };
 
   /* =======================
-     FETCH CUSTOMERS
+     FETCH CUSTOMER OPTIONS (ASYNC)
   ======================= */
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      setLoadingCustomers(true);
-      try {
-        const res = await fetch(`${BASE}index.php/client/ajax_clientDropdown`);
-        const data = await res.json();
-        setCustomers(Array.isArray(data?.result) ? data.result : []);
-      } catch (err) {
-        console.error(err);
-        setCustomers([]);
-      } finally {
-        setLoadingCustomers(false);
-      }
-    };
-
-    fetchCustomers();
-  }, []);
+  const loadCustomerOptions = async (inputValue) => {
+    try {
+      const res = await fetch(
+        `${BASE}index.php/client/ajax_clientDropdown?q=${inputValue}`,
+      );
+      const data = await res.json();
+      return (data?.result || []).map((c) => ({
+        value: c.id,
+        label: c.text,
+      }));
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  };
 
   /* =======================
      FETCH SHIPMENTS ON CUSTOMER SELECT
@@ -363,14 +361,13 @@ const ShipmentsEntry = () => {
                       Select Customer
                     </label>
                     <div className="select-wrapper">
-                      <Select
-                        isLoading={loadingCustomers}
-                        options={customers.map((c) => ({
-                          value: c.id,
-                          label: c.text,
-                        }))}
+                      <AsyncSelect
+                        cacheOptions
+                        defaultOptions
+                        loadOptions={loadCustomerOptions}
                         placeholder="Search customer by name or phone..."
                         onChange={(option) => setSelectedCustomer(option)}
+                        value={selectedCustomer}
                         isClearable
                       />
                     </div>
